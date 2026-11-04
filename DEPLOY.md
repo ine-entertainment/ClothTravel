@@ -1,11 +1,53 @@
-# Cloudflare Pages 部署
+# Cloudflare 部署
 
-这个仓库是**纯静态站点**，没有构建步骤。Cloudflare Pages 的发布目录是 `public/`。
+## 先确认：你创建的是 Pages 还是 Worker？
 
-## 方式一：Git 集成（推荐）
+如果构建日志里出现：
 
-1. 打开 Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**。
-2. 选择 GitHub 仓库 `ine-entertainment/ClothTravel`。
+```text
+Executing user deploy command: npx wrangler deploy
+...
+Missing entry-point to Worker script or to assets directory
+```
+
+说明当前 Cloudflare 项目是 **Worker（Workers Builds）**，不是 Pages。Worker 项目默认执行 `npx wrangler deploy`，需要仓库里有 Worker 或静态资源（assets）配置。
+
+本仓库现在**同时兼容两种部署方式**，二选一即可。
+
+---
+
+## 方式 A：继续用当前 Worker 项目（最快修复）
+
+`wrangler.toml` 已经配置为 **Workers Static Assets**：
+
+```toml
+name = "cloth-travel"
+compatibility_date = "2026-01-01"
+
+[assets]
+directory = "./public"
+not_found_handling = "404-page"
+```
+
+在 Cloudflare 当前项目里直接 **Retry deployment** 即可。
+
+- Deploy command：保持 `npx wrangler deploy`
+- Build command：不需要
+- Build output directory：Worker 模式不需要填
+- 部署结果：`https://<worker-name>.<account>.workers.dev`
+
+如果 Cloudflare 项目名不是 `cloth-travel`，把 `wrangler.toml` 里的 `name` 改成实际项目名，或者把项目名改成 `cloth-travel`。
+
+> 这是 Workers Static Assets，不是 Pages，但同样是一个静态站点，访问体验一样。
+
+---
+
+## 方式 B：新建 Cloudflare Pages 项目（你最初要的 Pages）
+
+Worker 项目不能直接转换成 Pages，需要新建一个 Pages 项目：
+
+1. Cloudflare Dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+2. 选择仓库 `ine-entertainment/ClothTravel`
 3. 按下面填写：
 
 | 配置项 | 值 |
@@ -19,46 +61,47 @@
 
 4. 点击 **Save and Deploy**。
 
-之后每次推送到 `main`，Cloudflare Pages 会自动重新部署。
+**不要**把 Deploy command 设置成 `npx wrangler deploy`；Pages 不需要 deploy command，它会直接上传 `public/`。
 
-## 方式二：Wrangler CLI
+之后每次推送到 `main`，Pages 会自动重新部署。
+
+---
+
+## 方式 C：Wrangler CLI
 
 需要 Node.js 18+。
 
-```bash
-# 第一次使用先登录
-npx wrangler@latest login
+### Worker 静态站点
 
-# 在仓库根目录执行，首次会自动提示创建 Pages 项目
+```bash
+npx wrangler@latest login
+npx wrangler@latest deploy
+```
+
+### Pages
+
+```bash
+npx wrangler@latest login
 npx wrangler@latest pages deploy public --project-name cloth-travel
 ```
 
-`wrangler.toml` 已经写好 `pages_build_output_dir = "public"`，所以也可以直接：
+首次部署如果项目不存在，Wrangler 会提示创建。
 
-```bash
-npx wrangler@latest pages deploy
-```
-
-部署完成后，终端会输出 `https://<project>.pages.dev` 地址。
-
-## 方式三：自定义域名
-
-1. Cloudflare Pages 项目 → **Custom domains** → **Set up a custom domain**。
-2. 输入域名，按提示添加 CNAME 或使用 Cloudflare DNS。
-3. HTTPS 证书由 Cloudflare 自动签发。
+---
 
 ## 目录说明
 
 ```text
-public/              # Cloudflare Pages 发布目录
+public/              # 静态资源目录（Pages 输出目录 / Worker assets 目录）
 ├── index.html       # 前端原型入口
 ├── styles.css
 ├── app.js
+├── favicon.svg
 ├── assets/img/      # 演示图片
-├── _headers         # Cloudflare Pages 响应头
+├── _headers         # Cloudflare 响应头
 └── 404.html         # 404 回首页
 docs/                # 产品策划 / 技术方案，不参与部署
-wrangler.toml        # Wrangler / Pages 配置
+wrangler.toml        # Worker Static Assets / Wrangler 配置
 ```
 
 ## 注意事项
@@ -66,4 +109,5 @@ wrangler.toml        # Wrangler / Pages 配置
 - 这是前端原型，支付、库存、物流、商家接单都是模拟数据。
 - 图片来自 Unsplash，仅用于原型演示；正式上线前替换为商家授权实拍/客片。
 - `_headers` 里已经加了基础安全头和静态资源缓存；如果后续接入真实支付/地图/IM，需要同步调整 CSP。
-- 如果 Cloudflare Pages 里填了 Root directory，请填仓库根目录，不要填 `public`；Build output directory 才是 `public`。
+- 如果你在 Cloudflare 里填了 Root directory，请填仓库根目录，不要填 `public`；输出目录才是 `public`。
+- Worker 和 Pages 不要同时往同一个自定义域名上绑，先确定用哪一种。

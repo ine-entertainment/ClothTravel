@@ -34,7 +34,11 @@ python -m http.server 4173 -d public
 
 Windows 也可以直接双击 `start.bat`。
 
-Cloudflare Pages 部署：连接本仓库后，**Build command 留空，Build output directory 填 `public`**。详见 [DEPLOY.md](DEPLOY.md)。
+Cloudflare 部署：
+
+- **当前 Worker 项目**：`wrangler.toml` 已配置 Workers Static Assets，直接 Retry `npx wrangler deploy` 即可。
+- **新建 Pages 项目**：连接仓库后，**Build command 留空，Build output directory 填 `public`**，不要设置 deploy command。
+- 两种方式的区别和排错见 [DEPLOY.md](DEPLOY.md)。
 
 ---
 
