@@ -36,9 +36,13 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   font-family: var(--font);
   color: var(--ink);
   background:
@@ -290,6 +294,7 @@ img {
 #app {
   position: absolute;
   inset: 44px 0 0;
+  max-width: 100%;
   overflow: hidden;
 }
 
@@ -298,6 +303,8 @@ img {
   inset: 0;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
+  overflow: hidden;
   background: var(--cream);
   animation: screenIn 0.28s ease both;
 }
@@ -305,6 +312,7 @@ img {
 .screen-scroll {
   flex: 1;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
@@ -424,6 +432,15 @@ img {
 
 .chips::-webkit-scrollbar {
   display: none;
+}
+
+.chips,
+.story-row,
+.real-look-row,
+.schedule-row,
+.spot-row {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chip {
@@ -3440,7 +3457,10 @@ img {
 @media (max-width: 760px) {
   .stage {
     display: block;
+    width: 100%;
+    max-width: 100%;
     padding: 0;
+    overflow-x: hidden;
   }
 
   .intro {
@@ -3449,20 +3469,27 @@ img {
 
   .phone-stage {
     width: 100%;
+    max-width: 100vw;
     min-height: 100dvh;
     gap: 0;
+    overflow-x: hidden;
   }
 
   .phone {
     width: 100%;
+    max-width: 100vw;
     height: 100dvh;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
+    overflow-x: hidden;
   }
 
   .phone-screen {
+    width: 100%;
+    max-width: 100vw;
     border-radius: 0;
+    overflow-x: hidden;
   }
 
   .island {
