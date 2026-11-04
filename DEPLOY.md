@@ -21,7 +21,7 @@ Missing entry-point to Worker script or to assets directory
 `wrangler.toml` 已经配置为 **Workers Static Assets**：
 
 ```toml
-name = "cloth-travel"
+name = "clothtravel"
 compatibility_date = "2026-01-01"
 
 [assets]
@@ -36,7 +36,7 @@ not_found_handling = "404-page"
 - Build output directory：Worker 模式不需要填
 - 部署结果：`https://<worker-name>.<account>.workers.dev`
 
-如果 Cloudflare 项目名不是 `cloth-travel`，把 `wrangler.toml` 里的 `name` 改成实际项目名，或者把项目名改成 `cloth-travel`。
+如果 Cloudflare 项目名不是 `clothtravel`，把 `wrangler.toml` 里的 `name` 改成实际项目名，或者把项目名改成 `clothtravel`。
 
 > 这是 Workers Static Assets，不是 Pages，但同样是一个静态站点，访问体验一样。
 
@@ -52,7 +52,7 @@ Worker 项目不能直接转换成 Pages，需要新建一个 Pages 项目：
 
 | 配置项 | 值 |
 | --- | --- |
-| Project name | `cloth-travel`（或你喜欢的名字） |
+| Project name | `clothtravel`（或你喜欢的名字） |
 | Production branch | `main` |
 | Framework preset | `None` |
 | Build command | 留空 |
@@ -82,7 +82,7 @@ npx wrangler@latest deploy
 
 ```bash
 npx wrangler@latest login
-npx wrangler@latest pages deploy public --project-name cloth-travel
+npx wrangler@latest pages deploy public --project-name clothtravel
 ```
 
 首次部署如果项目不存在，Wrangler 会提示创建。
